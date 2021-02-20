@@ -80,5 +80,3 @@ arch-chroot /mnt chsh -s /usr/bin/zsh
 echo "$user:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
 
-git clone "${REPO_URL}" "/mnt/home/${user}/kovalromank-arch"
-
