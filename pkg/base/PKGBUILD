@@ -1,0 +1,120 @@
+pkgname=kovalromank-base
+pkgver=0.0.1
+pkgrel=1
+pkdesc='Base system configuration'
+arch=('any')
+url='https://github.com/kovalromank/system-1'
+license=('MIT')
+
+provides=('vim' 'vi')
+conflicts=('vim' 'vi')
+replaces=('vim' 'vi')
+
+install=kovalromank-base.install
+
+# Base
+depends=(
+    'base'
+    'base-devel'
+    'linux'
+    'linux-firmware'
+    'linux-headers'
+    'intel-ucode'
+)
+
+# System utilities
+depends+=(
+    'sudo'              # Sudo
+    'zsh'               # ZSH shell  
+    'curl'              # URL retrieval utility and library
+    'wget'              # URL retrieval utility
+    'polkit'            # Toolkit for controlling system-wide privileges    
+    'ffmpeg'            # Video and audio toolkit
+    'xdg-user-dirs'     # Manager user directories
+    'pacman-contrib'    # Pacman scripts
+    'efibootmgr'        # Modify EFI Boot Manager
+
+    'networkmanager'                # Network connection manager
+    'networkmanager-openconnect'
+    'networkmanager-openvpn'
+
+    'openconnect'   # Network utilities
+    'openssh'
+    'openvpn'
+)
+
+# Filesystems
+depends+=(
+    'e2fsprogs'     # Ext2/3/4 utilities
+    'exfat-utils'   # exFAT utilities
+    'dosfstools'    # DOS utilities
+    'f2fs-tools'    # Flash-Friendly utilities
+)
+
+# Debugging tools
+depends+=(
+    'lsof'          # List open files for running processes
+    'bind-tools'    # DNS protocol implementation
+    'mtr'           # Traceroute and ping
+    'socat'         # Multipurpose relay
+    'htop'          # Interactive process viewer
+    'iotop'         # View I/O usage of processes
+    'gnu-netcat'    # Network piping application
+    'strace'        # Userspace tracer
+    'tcpdump'       # Command line packet viewer
+    'whois'         # WHOIS client
+    'iftop'         # Display bandwith usage
+    'dstat'         # Resource statistics tool
+)
+
+# Terminal utilities
+depends+=(
+    'neovim'    # Fork of Vim
+    'fzf'       # Fuzzy finder
+    'bat'       # Better cat utility
+    'fd'        # Better find utility
+    'ranger'    # Vim like file manager
+    'nano'      # Nano
+    'micro'     # Better nano
+    'ripgrep'   # Search tool
+    'ncdu'      # Disk usage analyzer 
+    'exa'       # Better ls
+
+    'zip'   # Zip file tools    
+    'unzip'   
+
+    'xsel'  # Clipboard tools
+    'xclip'
+
+    'imagemagick'   # Image utilities
+    'jq'            # JSON utilities
+    
+    'man-db'    # Documentation
+    'man-pages'
+    'texinfo'
+)
+
+# Development utilities
+depends+=(
+    'git'       # Git
+    'go'        # Golang
+    'rustup'    # Rust toolchain installer
+
+    'qemu'                  # Virtual machine emulator and virtualizer
+    'qemu-arch-extra'
+    'qemu-block-gluster'
+    'qemu-block-iscsi'
+    'qemu-block-rbd'
+    'libvirt'
+    'ebtables'
+    'dnsmasq'
+    'bridge-utils'
+    'edk2-ovmf'
+    'dmidecode'
+)
+
+package() {
+    cp -a "$rootdir/files/"* "$pkgdir"
+    chmod -R 0750 "$pkgdir/etc/sudoers.d"
+}
+

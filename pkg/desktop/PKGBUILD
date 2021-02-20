@@ -1,0 +1,75 @@
+pkgname=kovalromank-desktop
+pkgver=0.0.1
+pkgrel=1
+pkdesc='Desktop system configuration'
+arch=('any')
+url='https://github.com/kovalromank/arch'
+license=('MIT')
+
+install=kovalromank-desktop.install
+
+# Desktop
+depends=(
+    'xorg'  # Display server
+    'bspwm' # BSPWM Tiling window manager
+)
+
+# Desktop utilities
+depends+=(
+    'xfce4-settings'        # Settings manager
+    'xfce4-power-manager'   # Power manager
+    'sxhkd'                 # Hotkey daemon
+)
+
+# GUI utilities
+depends+=(
+    'firefox'                   # Firefox web browser
+    'kitty'                     # OpenGL-based terminal emulator
+    'speedcrunch'               # Calculator
+    'feh'                       # Image viewer + wallpaper
+    'viewnior'                  # Image viewer
+    'gnome-disk-utility'        # Disk management utility
+    'gnome-system-monitor'      # System monitor utility
+    'keepassxc'                 # Password manager
+    'network-manager-applet'    # Applet for controlling NetworkManager
+    'virt-manager'              # Graphical QEMU virtual machine manager
+    'seahorse'                  # Secrets manager
+    'polkit-gnome'              # Polkit agent for GNOME    
+
+    'thunar'                    # File manager
+    'gvfs'
+    'thunar-archive-plugin'
+    'thunar-media-tags-plugin'
+    'thunar-volman'
+    'tumbler'
+    'ffmpegthumbnailer'
+    'raw-thumbnailer'
+    'gvfs-afc'
+    'gvfs-gphoto2'
+
+    'virtualbox'                    # Virtual machine hypervisor
+    'virtualbox-host-modules-arch'
+    'virtualbox-guest-dkms'
+    'virtualbox-guest-utils'
+
+    'remmina'                   # Remote desktop client
+    'remmina-plugin-rdesktop'
+
+    'gtk-engine-murrine'    # GTK theme libs
+    'gtk-engines'
+)
+
+# Fonts
+depends+=(
+    'ttf-roboto'
+    'ttf-ubuntu-font-family'
+    'ttf-liberation'
+    'ttf-jetbrains-mono'
+    'noto-fonts'
+    'noto-fonts-emoji'
+)
+
+package() {
+    true
+}
+
