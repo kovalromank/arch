@@ -5,12 +5,22 @@
 set -euo pipefail
 trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
 
+print_label() {
+    local CYAN="\033[1;96m"
+    local NC="\033[0m"
+    echo -e "${CYAN}$@${NC}"
+}
+
 REPO_URL="https://github.com/kovalromank/arch.git"
 
-# Synchronize pacman database
+print_label "Synchronizing pacman database..."
 pacman -Sy
 
 [ ! -d "/sys/firmware/efi/efivars" ] && echo "System not booted in UEFI mode" && exit 1
+
+DIR=$(pwd)
+
+[ ! -d "$DIR/pkg/base" ] && echo "Run the script from repository root" && exit 1
 
 read -p "Admin username: " user
 [[ -z "$user" ]] && echo "Username cannot be empty" && exit 1
@@ -44,53 +54,64 @@ read -p "Hostname: " hostname
 part_boot=$device_boot
 part_root=$device_root
 
-# Update system clock
+print_label "Updating system clock..."
 timedatectl set-ntp true
 
-# Format the root partition
+print_label "Formatting the root partition..."
 mkfs.ext4 "$part_root"
 
-# Mount the boot and root partitions
+print_label "Mounting the boot and root partitions..."
 mount "$device_root" /mnt
 mkdir -p /mnt/boot/efi
 mount "$device_boot" /mnt/boot/efi
 
-# Install essential packages
-pacstrap /mnt base base-devel linux linux-firmware networkmanager git
+print_label "Installing essential packages..."
+pacstrap /mnt base base-devel linux linux-firmware networkmanager
 
-# Generate an fstab file
+print_label "Generating an fstab file..."
 genfstab -U /mnt >> /mnt/etc/fstab
 
-# Set time zone
+print_label "Setting time zone..."
 ln -sf /usr/share/zoneinfo/America/Toronto /mnt/etc/localtime
 
-# Generate locales
+print_label "Generating locales..."
 echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
 sed 's/#en_US/en_US/' -i /mnt/etc/locale.gen
 arch-chroot /mnt locale-gen
 
-# Generate /etc/adjtime
+print_label "Generating /etc/adjtime..."
 arch-chroot /mnt hwclock --systohc
 
-# Create hostname file
+print_label "Creating hostname file..."
 echo "$hostname" > /mnt/etc/hostname
 
-# Create hosts file
+print_label "Creating hosts file..."
 cat >> /mnt/etc/hosts <<EOF
 127.0.0.1   localhost
 ::1         localhost
 127.0.1.1   $hostname.localdomain   $hostname
 EOF
 
-# Create user
+print_label "Creating admin user..."
 arch-chroot /mnt useradd -mU -G wheel "$user"
 
-# Add user and root passwords
+print_label "Adding user and root passwords..."
 echo "$user:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
 
-# Clone system repo
-arch-chroot /mnt mkdir -p "/mnt/home/$user/arch"
-arch-chroot /mnt git clone "$REPO_URL" "/home/$user/arch"
-arch-chroot /mnt chmod -R 777 "/home/$user/arch"
+print_label "Adding admin to sudoers..."
+mkdir -p /mnt/etc/sudoers.d
+cat >> /mnt/etc/sudoers.d/kovalromank-base <<EOF
+%wheel ALL=(ALL) ALL
+Defaults passwd_timeout=0
+EOF
+
+print_label "Coping system repo over..."
+repo_dest="/mnt/home/$user/arch"
+mkdir -p $repo_dest
+cp . $repo_dest
+arch-chroot /mnt chown -R "$user:" $repo_dest 
+arch-chroot /mnt chmod -R u+w $repo_dest
+
+print_label "Done! Reboot and run postsetup"
 

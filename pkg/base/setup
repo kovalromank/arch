@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 
-# Finishes the setup script
-
 set -euo pipefail
 trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
 
-sudo systemctl enable NetworkManager
-sudo systemctl start NetworkManager
+pacman -S --needed --noconfirm base base-devel linux linux-firmware
 

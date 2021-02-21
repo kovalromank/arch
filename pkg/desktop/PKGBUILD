@@ -10,7 +10,6 @@ install=kovalromank-desktop.install
 
 # Desktop
 depends=(
-    'xorg'  # Display server
     'bspwm' # BSPWM Tiling window manager
 )
 

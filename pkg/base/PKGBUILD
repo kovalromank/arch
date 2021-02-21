@@ -16,9 +16,6 @@ rootdir=$PWD
 
 # Base
 depends=(
-    'base'
-    'linux'
-    'linux-firmware'
     'linux-headers'
     'intel-ucode'
 )
@@ -81,6 +78,7 @@ depends+=(
     'ripgrep'   # Search tool
     'ncdu'      # Disk usage analyzer 
     'exa'       # Better ls
+    'tree'      # Tree tool
 
     'zip'   # Zip file tools    
     'unzip'   
