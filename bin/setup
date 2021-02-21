@@ -3,7 +3,6 @@
 # Sets up system for installing base pkg
 
 REPO_URL="https://github.com/kovalromank/arch.git"
-MIRRORLIST_URL="https://archlinux.org/mirrorlist/?country=CA&protocol=https&use_mirror_status=on"
 
 [ ! -d "/sys/firmware/efi/efivars" ] && echo "System not booted in UEFI mode" && exit 1
 
@@ -33,16 +32,14 @@ read -p "Root partition: " device_root
 
 [[ "$device_boot" == "$device_root" ]] && echo "Boot parition cannot be the same as the root partition" && exit 1
 
-read -p "Hostname :" hostname
+read -p "Hostname: " hostname
 [[ -z "$hostname" ]] && echo "Hostname cannot be empty" && exit 1
 
 part_boot=$device_boot
 part_root=$device_root
 
 # Update mirror list
-curl -s "$MIRRORLIST_URL" | \
-    sed -e 's/^#Server/Server/' -e '/^#/d' | \
-    rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
+reflector -c CA,US -l 200 -n 10 --sort rate --save /etc/pacman.d/mirrorlist
 
 # Synchronize pacman database
 pacman -Sy
@@ -93,7 +90,7 @@ echo "$user:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
 
 # Clone system repo
-arch-chroot mkdir -p "/mnt/home/$user/arch"
-arch-chroot git clone "$REPO_URL" "/home/$user/arch"
-arch-chroot chmod -R 777 "/home/$user/arch"
+arch-chroot /mnt mkdir -p "/mnt/home/$user/arch"
+arch-chroot /mnt git clone "$REPO_URL" "/home/$user/arch"
+arch-chroot /mnt chmod -R 777 "/home/$user/arch"
 
