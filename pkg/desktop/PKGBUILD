@@ -53,7 +53,6 @@ depends+=(
     'virtualbox-guest-utils'
 
     'remmina'                   # Remote desktop client
-    'remmina-plugin-rdesktop'
 
     'gtk-engine-murrine'    # GTK theme libs
     'gtk-engines'
