@@ -2,6 +2,9 @@
 
 # Sets up system for installing base pkg
 
+set -euo pipefail
+trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
+
 REPO_URL="https://github.com/kovalromank/arch.git"
 
 # Synchronize pacman database
