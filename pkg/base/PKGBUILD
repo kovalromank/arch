@@ -1,5 +1,5 @@
 pkgname=kovalromank-base
-pkgver=0.0.1
+pkgver=0.0.2
 pkgrel=1
 pkdesc='Base system configuration'
 arch=('any')
@@ -9,6 +9,8 @@ license=('MIT')
 provides=('vim' 'vi')
 conflicts=('vim' 'vi')
 replaces=('vim' 'vi')
+
+install=kovalromank-base.install
 
 rootdir=$PWD
 

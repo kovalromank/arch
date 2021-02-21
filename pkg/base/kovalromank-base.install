@@ -1,0 +1,19 @@
+post_install() {
+	post_upgrade
+}
+
+post_upgrade() {
+	systemctl enable NetworkManager > /dev/null
+	systemctl start NetworkManager > /dev/null
+
+	systemctl enable libvirtd > /dev/null
+	systemctl start libvirtd > /dev/null
+
+	if [ -f "/etc/modprobe.d/hid_apple.conf" ]; then
+		echo "Did not update hid_apple.conf because file already exists"
+	else
+		echo "options hid_apple fnmode=0" | sudo tee /etc/modprobe.d/hid_apple.conf > /dev/null
+		sudo mkinitcpio -P
+	fi
+}
+

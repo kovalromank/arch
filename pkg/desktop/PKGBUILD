@@ -8,7 +8,8 @@ license=('MIT')
 
 # Desktop
 depends=(
-    'bspwm' # BSPWM Tiling window manager
+    'xorg-xinit' # Xorg init tools
+    'bspwm'      # BSPWM Tiling window manager
 )
 
 # Desktop utilities
