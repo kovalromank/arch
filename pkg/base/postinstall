@@ -18,7 +18,7 @@ systemctl --user start xdg-user-dirs-update > /dev/null
 if [ -f "/etc/modprobe.d/hid_apple.conf" ]; then
 	echo "Didn't update hid_apple.conf because file already exists"
 else
-	sudo mkinitcpio -P
 	echo "options hid_apple fnmode=0" | sudo tee /etc/modprobe.d/hid_apple.conf > /dev/null
+	sudo mkinitcpio -P
 fi
 
