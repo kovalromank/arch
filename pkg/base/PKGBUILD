@@ -15,7 +15,6 @@ install=kovalromank-base.install
 # Base
 depends=(
     'base'
-    'base-devel'
     'linux'
     'linux-firmware'
     'linux-headers'
