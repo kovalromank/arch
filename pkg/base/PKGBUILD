@@ -12,6 +12,8 @@ replaces=('vim' 'vi')
 
 install=kovalromank-base.install
 
+rootdir=$PWD
+
 # Base
 depends=(
     'base'
