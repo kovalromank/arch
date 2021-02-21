@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+
+# Sets up system for installing base pkg
+
+REPO_URL="https://github.com/kovalromank/arch.git"
+MIRRORLIST_URL="https://archlinux.org/mirrorlist/?country=CA&protocol=https&use_mirror_status=on"
+
+[ ! -d "/sys/firmware/efi/efivars" ] && echo "System not booted in UEFI mode" && exit 1
+
+read -p "Admin username: " user
+[[ -z "$user" ]] && echo "Username cannot be empty" && exit 1
+
+read -sp "Admin password: " password
+echo
+[[ -z "$password" ]] && echo "Password cannot be empty" && exit 1
+
+read -sp "Repeat password: " password2
+echo
+[[ ! "$password" == "$password2" ]] && echo "Passwords didn't match" && exit 1
+
+devicelist=$(lsblk -plnx name -o name,size | grep -Ev "boot|rpmb|loop")
+echo "Devices: "
+echo "$devicelist" | less -XF
+
+read -p "Boot partition: " device_boot
+[[ -z "$device_boot" ]] || [ ! -b $device_boot ] && echo "Not a block device" && exit 1
+
+echo "Devices: "
+echo "$devicelist" | less -XF
+
+read -p "Root partition: " device_root
+[[ -z "$device_root" ]] || [ ! -b $device_root ] && echo "Not a block device" && exit 1
+
+[[ "$device_boot" == "$device_root" ]] && echo "Boot parition cannot be the same as the root partition" && exit 1
+
+read -p "Hostname :" hostname
+[[ -z "$hostname" ]] && echo "Hostname cannot be empty" && exit 1
+
+part_boot=$device_boot
+part_root=$device_root
+
+# Update system clock
+timedatectl set-ntp true
+
+# Format the root partition
+mkfs.ext4 -f "$part_root"
+
+# Mount the boot and root partitions
+mount "$device_root" /mnt
+mkdir -p /mnt/boot/efi
+mount "$device_boot" /mnt/boot/efi
+
+# Update mirror list
+curl -s "$MIRRORLIST_URL" | \
+    sed -e 's/^#Server/Server/' -e '/^#/d' | \
+    rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
+
+# Install essential packages
+pacstrap /mnt base linux linux-firmware networkmanager git
+
+# Generate an fstab file
+genfstab -U /mnt >> /mnt/etc/fstab
+
+# Set time zone
+ln -sf /usr/share/zoneinfo/America/Toronto /mnt/etc/localtime
+
+# Generate locales
+echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
+sed 's/#en_US/en_US/' -i /mnt/etc/locale.gen
+arch-chroot /mnt locale-gen
+
+# Generate /etc/adjtime
+arch-chroot hwclock --systohc
+
+# Create hostname file
+echo "$hostname" > /mnt/etc/hostname
+
+# Create hosts file
+cat >> /mnt/etc/hosts <<EOF
+127.0.0.1   localhost
+::1         localhost
+127.0.1.1   $hostname.localdomain   $hostname
+EOF
+
+# Create user
+arch-chroot /mnt useradd -mU -G wheel "$user"
+
+# Add user and root passwords
+echo "$user:$password" | chpasswd --root /mnt
+echo "root:$password" | chpasswd --root /mnt
+
+# Clone system repo
+arch-chroot mkdir -p "/mnt/home/$user/arch"
+arch-chroot git clone "$REPO_URL" "/home/$user/arch"
+arch-chroot chmod -R 777 "/home/$user/arch"
+

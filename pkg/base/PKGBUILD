@@ -3,7 +3,7 @@ pkgver=0.0.1
 pkgrel=1
 pkdesc='Base system configuration'
 arch=('any')
-url='https://github.com/kovalromank/system-1'
+url='https://github.com/kovalromank/arch'
 license=('MIT')
 
 provides=('vim' 'vi')
