@@ -39,21 +39,24 @@ read -p "Hostname :" hostname
 part_boot=$device_boot
 part_root=$device_root
 
+# Update mirror list
+curl -s "$MIRRORLIST_URL" | \
+    sed -e 's/^#Server/Server/' -e '/^#/d' | \
+    rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
+
+# Synchronize pacman database
+pacman -Sy
+
 # Update system clock
 timedatectl set-ntp true
 
 # Format the root partition
-mkfs.ext4 -f "$part_root"
+mkfs.ext4 "$part_root"
 
 # Mount the boot and root partitions
 mount "$device_root" /mnt
 mkdir -p /mnt/boot/efi
 mount "$device_boot" /mnt/boot/efi
-
-# Update mirror list
-curl -s "$MIRRORLIST_URL" | \
-    sed -e 's/^#Server/Server/' -e '/^#/d' | \
-    rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
 
 # Install essential packages
 pacstrap /mnt base linux linux-firmware networkmanager git
