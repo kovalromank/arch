@@ -107,9 +107,9 @@ Defaults passwd_timeout=0
 EOF
 
 print_label "Coping system repo over..."
-repo_dest="/mnt/home/$user/arch"
-mkdir -p $repo_dest
-cp . $repo_dest
+repo_dest="/home/$user/arch"
+mkdir -p "/mnt$repo_dest"
+cp -r . "/mnt$repo_dest"
 arch-chroot /mnt chown -R "$user:" $repo_dest 
 arch-chroot /mnt chmod -R u+w $repo_dest
 
