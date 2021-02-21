@@ -10,8 +10,6 @@ provides=('vim' 'vi')
 conflicts=('vim' 'vi')
 replaces=('vim' 'vi')
 
-install=kovalromank-base.install
-
 rootdir=$PWD
 
 # Base
@@ -115,6 +113,5 @@ depends+=(
 
 package() {
     cp -a "$rootdir/files/"* "$pkgdir"
-    chmod -R 0750 "$pkgdir/etc/sudoers.d"
 }
 

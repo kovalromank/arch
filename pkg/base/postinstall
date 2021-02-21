@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
+
+sudo systemctl enable polkit > /dev/null
+sudo systemctl start polkit > /dev/null
+
+sudo systemctl enable NetworkManager > /dev/null
+sudo systemctl start NetworkManager > /dev/null
+
+sudo systemctl enable libvirtd > /dev/null
+sudo systemctl start libvirtd > /dev/null
+
+systemctl --user enable xdg-user-dirs-update > /dev/null
+systemctl --user start xdg-user-dirs-update > /dev/null
+
