@@ -67,7 +67,7 @@ sed 's/#en_US/en_US/' -i /mnt/etc/locale.gen
 arch-chroot /mnt locale-gen
 
 # Generate /etc/adjtime
-arch-chroot hwclock --systohc
+arch-chroot /mnt hwclock --systohc
 
 # Create hostname file
 echo "$hostname" > /mnt/etc/hostname
