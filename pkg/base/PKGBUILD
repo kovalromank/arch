@@ -30,6 +30,7 @@ depends+=(
     'wget'              # URL retrieval utility
     'polkit'            # Toolkit for controlling system-wide privileges    
     'ffmpeg'            # Video and audio toolkit
+    'imagemagick'       # Image toolkit
     'xdg-user-dirs'     # Manager user directories
     'pacman-contrib'    # Pacman scripts
     'efibootmgr'        # Modify EFI Boot Manager
