@@ -4,6 +4,9 @@
 
 REPO_URL="https://github.com/kovalromank/arch.git"
 
+# Synchronize pacman database
+pacman -Sy
+
 [ ! -d "/sys/firmware/efi/efivars" ] && echo "System not booted in UEFI mode" && exit 1
 
 read -p "Admin username: " user
@@ -37,12 +40,6 @@ read -p "Hostname: " hostname
 
 part_boot=$device_boot
 part_root=$device_root
-
-# Update mirror list
-reflector -c CA,US -l 200 -n 10 --sort rate --save /etc/pacman.d/mirrorlist
-
-# Synchronize pacman database
-pacman -Sy
 
 # Update system clock
 timedatectl set-ntp true
